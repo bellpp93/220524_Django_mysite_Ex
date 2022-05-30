@@ -5,29 +5,50 @@
     <title>question_detail.html</title>
 </head>
 <body>
-    {% load static %}
-    <link rel="stylesheet" type="text/css" href="{% static 'style.css'%}">
-
-    <h1>{{ question.subject }}</h1>
-
-    <div>
-        {{ question.content }}
+    {% extends 'base.html' %}
+    {% block content %}
+    <div class="container my-3">
+        <!-- 질문 -->
+        <h2 class="border-bottom py-2">{{ question.subject }}</h2>
+        <div class="card my-3">
+            <div class="card-body">
+                <div class="card-text" style="white-space: pre-line">
+                    {{ question.content }}
+                </div>
+                <div class="d-flex justify-content-end">
+                    <div class="badge badge-secondary p-2"> <!-- badge의 개별클래스 light, dark, secondary.. -->
+                        {{ question.create_date }}
+                    </div>
+                </div>
+            </div>
+        </div>
+    <!-- 답변 -->
+    <h5 class="border-bottom my-3 py-2">
+        {{ question.answer_set.count }}개의 답변이 있습니다.
+    </h5>
+    {% for answer in question.answer_set.all %}
+    <div class="card my-3">
+        <div class="card-body">
+            <div class="card-text" style="white-space: pre-line;">
+                {{ answer.content }}
+            </div>
+            <div class="d-flex justify-content-end">
+                <div class="badge badge-light p-2">
+                    {{ answer.create_date }}
+                </div>
+            </div>
+        </div>
     </div>
+    {% endfor %}
 
-    <h5>{{ question.answer_set.count }}개의 답변이 있습니다.</h5>
-    <div>
-        <ul>
-        {% for answer in question.answer_set.all %}
-            <li>{{ answer.content }}</li>
-        {% endfor %}
-        </ul>
-    </div>
-
-    <form action="{% url 'pybo:answer_create' question.id %}" method="post">  <!-- pybo:answer_create는 namespace -->
-    {% csrf_token %}  <!-- 사이트 간 요청 위조(cross-site request forgery) -->
-    <textarea name="content" id="content" rows="15"></textarea>
-    <br>
-    <input type="submit" value="답변 등록">
+    <form action="{% url 'pybo:answer_create' question.id %}" method="post" class="my-3">
+        {% csrf_token %}
+        <div class="form-group">
+            <textarea name="content" id="content" class="form-control" rows="10"></textarea>
+        </div>
+        <input type="submit" value="답변 등록" class="btn btn-primary">  <!-- primary(블루) success(그린) info(하늘색) -->
     </form>
+    </div>
+    {% endblock %}
 </body>
 </html>
