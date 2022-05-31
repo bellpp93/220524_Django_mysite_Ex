@@ -1,8 +1,9 @@
 from django.shortcuts import render, get_object_or_404, redirect
 from django.http import HttpResponse
+from django.http import HttpResponseNotAllowed
 from .models import Question
 from django.utils import timezone
-from .forms import QuestionForm
+from .forms import QuestionForm, AnswerForm
 from django.core.paginator import Paginator
 
 # Create your views here.
@@ -28,9 +29,23 @@ def answer_create(request, question_id):
         pybo 답변 등록
     """
     question = get_object_or_404(Question, pk=question_id)
+    if request.method == "POST":
+        form = AnswerForm(request.POST)
+        if form.is_valid():
+            answer = form.save(commit=False)
+            answer.create_date = timezone.now()
+            answer.question = question
+            answer.save()
+            return redirect('pybo:detail', question_id=question.id)
+    else:
+        return HttpResponseNotAllowed('Only POST is possible.')
+    context = {'question': question, 'form': form}
+    return render(request, 'pybo/question_detail.html', context)
+    """
     question.answer_set.create(content=request.POST.get('content'),
                                create_date=timezone.now())
     return redirect('pybo:detail', question_id=question.id)
+    """
 
 def question_create(request):
     """
