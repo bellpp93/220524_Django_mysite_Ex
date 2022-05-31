@@ -15,6 +15,7 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path, include
+from pybo import views
 
 # pybo/로 시작되는 페이지 요청은 모두 pybo/urls.py 파일에 있는
 # URL 매핑을 참고하여 처리하라는 의미이다.
@@ -22,4 +23,5 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('pybo/', include('pybo.urls')),  # pybo에 views파일에 index함수가 처리해라 => 뷰(View)로 전달
     path('common/', include('common.urls')),
+    path('', views.index, name='index'),  # '/' 에 해당되는 path
 ]
