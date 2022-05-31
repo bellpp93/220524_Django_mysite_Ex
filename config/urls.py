@@ -21,4 +21,5 @@ from django.urls import path, include
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('pybo/', include('pybo.urls')),  # pybo에 views파일에 index함수가 처리해라 => 뷰(View)로 전달
+    path('common/', include('common.urls')),
 ]

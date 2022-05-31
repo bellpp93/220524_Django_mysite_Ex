@@ -3,14 +3,18 @@ from django.http import HttpResponse
 from .models import Question
 from django.utils import timezone
 from .forms import QuestionForm
+from django.core.paginator import Paginator
 
 # Create your views here.
 def index(request):
     """
         pybo 목록 출력
     """
+    page = request.GET.get('page', '1')  # 페이지
     question_list = Question.objects.order_by('-create_date')  # -붙으면 내림차순 없으면 오름차순
-    context = {'question_list': question_list}  # 딕셔너리의 {키 : 값}
+    paginator = Paginator(question_list, 10)  # 페이지당 10개씩 보여주기
+    page_object = paginator.get_page(page)
+    context = {'question_list': page_object}  # 딕셔너리의 {'키' : 값}
     return render(request, 'pybo/question_list.html', context)  # 인자 값 3개
 
 def detail(request, question_id):
